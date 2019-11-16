@@ -112,6 +112,9 @@ namespace NoSqlDb
 
 		Query<T>& select(Conditions<T> conds);
 
+		template<typename CallObj>
+		Query<T>& select(CallObj callobj);
+
 	private:
 		DbCore<T>* db_;
 		Keys keys_;
@@ -161,6 +164,22 @@ namespace NoSqlDb
 		{
 			conds.dbElement((*db_)[k]);
 			if (conds.match())
+			{
+				new_keys.push_back(k);
+			}
+		}
+		keys_ = new_keys;
+		return *this;
+	}
+
+	template<typename T>
+	template<typename CallObj>
+	Query<T>& Query<T>::select(CallObj callobj)
+	{
+		Keys new_keys;
+		for (auto k : keys_)
+		{
+			if (callobj((*db_)[k]))
 			{
 				new_keys.push_back(k);
 			}
