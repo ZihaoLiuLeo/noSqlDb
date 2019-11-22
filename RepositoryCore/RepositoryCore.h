@@ -9,11 +9,13 @@
 #include "../Query/Query.h"
 #include "../PayLoad/Payload.h"
 #include <string>
+#include "../FileSystem/FileSystemDemo/FileSystem.h"
 
 
 namespace RepoCore
 {
 	using namespace NoSqlDb;
+	using namespace FileSystem;
 	
 	template<typename P>
 	class RepositoryCore
@@ -33,7 +35,7 @@ namespace RepoCore
 		FilePath path() const { return path; }
 		void path(FilePath& path) { path = path };
 
-		RepositoryCore<P>& store(P p);
+		RepositoryCore<P>& storeFile(P p);
 
 	private:
 		DbCore<P> db_;
@@ -74,10 +76,12 @@ namespace RepoCore
 	}
 
 	template<typename P>
-	RepositoryCore<P>& RepositoryCore<P>::store(P p)
+	RepositoryCore<P>& RepositoryCore<P>::storeFile(P p)
 	{
-		Key key = p.value;
-		DbElement<P> dbe = db_[key];
+		Key& key = p.value();
+		DbElement<P>& dbe = db_[key];
+		dbe.children = p.dependFiles;
+		dbe.name = FileSystem::Path::getName(p.value());
 		dbe.payLoad = p;
 		return *this;
 	}

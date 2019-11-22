@@ -9,8 +9,12 @@
 #include <string>
 #include "../PayLoad/Payload.h"
 #include "../RepositoryCore/RepositoryCore.h"
+#include "../Version/Version.h"
+#include "../FileSystem/FileSystemDemo/FileSystem.h"
 
 namespace RepoCore {
+	using namespace FileSystem;
+
 	template<typename P>
 	class CheckIn
 	{
@@ -28,9 +32,9 @@ namespace RepoCore {
 		CheckIn<P>& operator=(CheckIn<P>&& ci);
 
 		CheckIn<P>& addFile(P p); // open checkin then store info in db, store file in repo, add version to filename, close then update version
-		CheckIn<P>& addPackage(PackageName pn);
+		CheckIn<P>& addPackage(P p);
 
-		CheckIn<P>& setStatus(Status status)
+		CheckIn<P>& Close();
 
 		bool ableToSetStatus(P p); // find all dependent file for this check in
 
@@ -75,10 +79,12 @@ namespace RepoCore {
 	template<typename P>
 	CheckIn<P>& CheckIn<P>::addFile(P p)
 	{
+		rc_.storeFile(p);
 		if (isOpen)
 		{
-			rc_.store(p);
+			
 			//TODO denpendency check
+			// p.dependFile all in dir
 			/*
 			open p.value();
 			new filename: filename + version.num(), copy content
@@ -89,12 +95,43 @@ namespace RepoCore {
 	}
 
 	template<typename P>
+	CheckIn<P>& CheckIn<P>::addPackage(P p)
+	{
+		/*std::string packagePath = p.value();
+		std::vector<std::string> packageFiles = FileSystem::Directory::getFiles();
+		for (size_t i = 0; i < packageFiles.size(); ++i)
+			rc_.store(packageFiles[i]);*/
+		if (isOpen)
+		{
+			//for all file in p.value
+			//	rc_.store(p);
+			/*
+			open p.value();
+			new filename: filename + version.num(), copy content
+			add to rc_.path();
+			*/
+		}
+		else
+		{
+			/*
+			same process,
+			update version
+			*/
+		}
+		return *this;
+	}
+
+	template<typename P>
 	bool CheckIn<P>::ableToSetStatus()
 	{
 		/*
-		for d in p.depent
-			find d in rc_[p.value].children()
+		for f in p.dependFiles
+			if current dir contains f
+
+			else 
+				return false
+		
+		return true;
 		*/
-		return true
 	}
 }

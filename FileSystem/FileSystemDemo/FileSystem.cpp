@@ -784,7 +784,7 @@ int main(int argc, char* argv[])
   std::string ffs = Path::getFullFileSpec(fs);
   std::cout << "\n  Path::getFullFileSpec(\"" + fs + "\") = " << ffs;
   
-  std::string name = Path::getName(fs);
+  std::string name = Path::getName(ffs);
   std::cout << "\n  Path::getName(\"" + fs + "\") = " << name;
 
   std::string ext = Path::getExt(fs);

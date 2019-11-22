@@ -10,6 +10,8 @@ namespace NoSqldb
 {
 	class PayLoad
 	{
+		using FileName = std::string;
+
 	public:
 		PayLoad() = default;
 		PayLoad(const std::string& val) : value_(val) {}
@@ -22,12 +24,17 @@ namespace NoSqldb
 		std::vector<std::string> categories() const { return categories_; }
 		void categories(const std::vector<std::string>& categories) { categories_ = categories; }
 
+		std::vector<FileName>& dependFiles() { return dependFiles_; }
+		std::vector<FileName> dependsFiles() const { return dependFiles_; }
+		void dependFiles(const std::vector<FileName>& depends) { dependFiles_ = depends; }
+
 		bool hasCategory(const std::string& category);
 
 
 	private:
 		std::string value_;
 		std::vector<std::string> categories_;
+		std::vector<FileName> dependFiles_;
 	};
 
 	inline bool PayLoad::hasCategory(const std::string& category)
