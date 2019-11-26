@@ -847,6 +847,7 @@ int main(int argc, char* argv[])
   std::cout << "\n";
 
   // Create directory
+  Directory::create("c:/temp");
 
   title("Demonstrate FileInfo Class Operations", '=');
   std::cout << "\n";

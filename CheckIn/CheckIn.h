@@ -9,8 +9,9 @@
 #include <string>
 #include "../PayLoad/Payload.h"
 #include "../RepositoryCore/RepositoryCore.h"
-#include "../Version/Version.h"
 #include "../FileSystem/FileSystemDemo/FileSystem.h"
+#include "../Version/Version.h"
+#include <vector>
 
 namespace RepoCore {
 	using namespace FileSystem;
@@ -36,7 +37,7 @@ namespace RepoCore {
 
 		CheckIn<P>& Close();
 
-		bool ableToSetStatus(P p); // find all dependent file for this check in
+		bool ableToClose(); // find all dependent file for this check in
 
 		P* payload() { return p; }
 		P payload() const { return p; }
@@ -44,8 +45,9 @@ namespace RepoCore {
 
 	private:
 		RepositoryCore<P>& rc_;
-		P p;
+		P p_;
 		Status isOpen = true;
+		Version version;	
 	};
 
 	template<typename P>
@@ -97,41 +99,85 @@ namespace RepoCore {
 	template<typename P>
 	CheckIn<P>& CheckIn<P>::addPackage(P p)
 	{
-		/*std::string packagePath = p.value();
+		
+		if(!isOpen())
+		{
+			version.increment();
+		}
+
+		p_ = p;
+		std::string packagePath = p.value();
+		std::string repoPath = rc_.path();
+
+		// go to checkin package location
+		FileSystem::Directory::setCurrentDirectory(repoPath);
 		std::vector<std::string> packageFiles = FileSystem::Directory::getFiles();
+		
+
 		for (size_t i = 0; i < packageFiles.size(); ++i)
-			rc_.store(packageFiles[i]);*/
+		{
+			// file info to be copied from
+			std::string fs = FileSystem::Path::fileSpec(p.value(), packageFiles[i]);
+
+			// file info to be copied to
+			std::string tname = packageFiles[i] + "." + version.getNum();
+			std::string ts = FileSystem::Path::fileSpec(repoPath, tname);
+
+			// store info in database
+			P p_temp = p;
+			p_temp.value(packageFiles[i]);
+			rc_.storeFile(p_temp);
+			
+
+			//copy file into repo path
+			File to(ts);
+			to.open(File::out, File::text);
+			File from(fs);
+			from.open(File::in, File::text);
+
+			while (to.isGood() && from.isGood())
+			{
+				std::string temp = from.getLine();
+				to.putLine(temp);
+				to.putLine("\n");
+			}
+		}
+
 		if (isOpen)
 		{
-			//for all file in p.value
-			//	rc_.store(p);
-			/*
-			open p.value();
-			new filename: filename + version.num(), copy content
-			add to rc_.path();
-			*/
+			if (ableToClose())
+			{
+				version.isAbleToLock();
+			}
 		}
-		else
-		{
-			/*
-			same process,
-			update version
-			*/
-		}
+		
 		return *this;
 	}
 
 	template<typename P>
-	bool CheckIn<P>::ableToSetStatus()
+	bool CheckIn<P>::ableToClose()
 	{
-		/*
-		for f in p.dependFiles
-			if current dir contains f
+		std::vector<std::string> depends;
+		depends = p_.dependFiles();
 
-			else 
-				return false
-		
+		std::string repoPath = rc_.path();
+		FileSystem::Directory::setCurrentDirectory(repoPath);
+		std::vector<std::string> pf = FileSystem::Directory::getFiles();
+
+		for (auto f : depends)
+		{
+			if (std::find(pf.begin(), pf.end(), f) == pf.end())
+			{
+				return false;
+			}
+		}
 		return true;
-		*/
+	}
+
+	template<typename P>
+	CheckIn<P>& CheckIn<P>::Close()
+	{
+		version.lock();
+		isOpen = false;
 	}
 }

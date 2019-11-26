@@ -1,6 +1,7 @@
 #pragma once
+#include <string>
 
-namespace RepositoryCore
+namespace RepoCore
 {
 	class Version
 	{
@@ -9,7 +10,11 @@ namespace RepositoryCore
 		Version& increment();
 		Version& lock();
 
-		Version& isAbleToLock() { ableToLock = true; return *this; }
+		void isAbleToLock() { ableToLock = true; }
+
+		bool AbleToLock() const { return ableToLock; }
+
+		std::string getNum() const { return std::to_string(versionNum_); }
 
 	private:
 		int versionNum_ = 1;

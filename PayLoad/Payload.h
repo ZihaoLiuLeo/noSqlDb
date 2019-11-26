@@ -1,5 +1,5 @@
 #ifndef PAYLOAD_H
-#define PAYLAOD_H
+#define PAYLOAD_H
 
 #include <string>
 #include <vector>

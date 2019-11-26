@@ -2,7 +2,7 @@
 #include <string>
 #include <iostream>
 
-using namespace RepositoryCore;
+using namespace RepoCore;
 
 Version& Version::increment()
 {
@@ -28,4 +28,9 @@ Version& Version::lock()
 		std::cout << "Unable to lock, failed to lock verison." << std::endl;
 	}
 	return *this;
+}
+
+int main()
+{
+	return 0;
 }

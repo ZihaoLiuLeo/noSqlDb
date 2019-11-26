@@ -23,6 +23,7 @@ namespace RepoCore
 	public:
 		using FilePath = std::string;
 		using Key = std::string;
+		using Keys = std::vector<Key>;
 
 		RepositoryCore() = default;
 		RepositoryCore(const RepositoryCore<P>& rc);
@@ -31,15 +32,17 @@ namespace RepoCore
 		RepositoryCore<P>& operator=(const RepositoryCore<P>& q);
 		RepositoryCore<P>& operator=(RepositoryCore<P> && q);
 
-		FilePath& path() { return path; }
-		FilePath path() const { return path; }
-		void path(FilePath& path) { path = path };
+		FilePath& path() { return path_; }
+		FilePath path() const { return path_; }
+		void path(FilePath& path) { path = path_ };
+
+		bool createRepoDir();
 
 		RepositoryCore<P>& storeFile(P p);
 
 	private:
 		DbCore<P> db_;
-		FilePath path = "";
+		FilePath path_ = "";
 		//DbElement<P>* p_dbe = nullptr;
 	};
 
@@ -80,10 +83,19 @@ namespace RepoCore
 	{
 		Key& key = p.value();
 		DbElement<P>& dbe = db_[key];
-		dbe.children = p.dependFiles;
-		dbe.name = FileSystem::Path::getName(p.value());
-		dbe.payLoad = p;
+		dbe.children(p.dependFiles);
+		dbe.name(FileSystem::Path::getName(p.value()));
+		dbe.payLoad(p);
 		return *this;
+	}
+
+	template<typename P>
+	bool RepositoryCore<P>::createRepoDir()
+	{
+		if (!path_.empty())
+		{
+			return FileSystem::Directory::create(path_);
+		}
 	}
 
 	/*
