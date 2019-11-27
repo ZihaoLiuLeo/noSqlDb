@@ -20,6 +20,10 @@ namespace NoSqldb
 		std::string value() const { return value_; }		
 		void value(const std::string& value) { value_ = value; }
 
+		std::string& name() { return name_; }
+		std::string name() const { return name_; }
+		void name(const std::string& name) { name_ = name; }
+
 		std::vector<std::string>& categories() { return categories_; }
 		std::vector<std::string> categories() const { return categories_; }
 		void categories(const std::vector<std::string>& categories) { categories_ = categories; }
@@ -28,13 +32,19 @@ namespace NoSqldb
 		std::vector<FileName> dependsFiles() const { return dependFiles_; }
 		void dependFiles(const std::vector<FileName>& depends) { dependFiles_ = depends; }
 
+		int& version() { return version_; }
+		int version() const { return version_; }
+		void version(const int& version) { version_ = version; }
+
 		bool hasCategory(const std::string& category);
 
 
 	private:
 		std::string value_;
+		std::string name_;
 		std::vector<std::string> categories_;
 		std::vector<FileName> dependFiles_;
+		int version_ = 0;
 	};
 
 	inline bool PayLoad::hasCategory(const std::string& category)

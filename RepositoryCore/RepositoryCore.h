@@ -10,6 +10,7 @@
 #include "../PayLoad/Payload.h"
 #include <string>
 #include "../FileSystem/FileSystemDemo/FileSystem.h"
+#include "../Query/Query.h"
 
 
 namespace RepoCore
@@ -17,14 +18,14 @@ namespace RepoCore
 	using namespace NoSqlDb;
 	using namespace FileSystem;
 	
+	using FilePath = std::string;
+	using Key = std::string;
+	using Keys = std::vector<Key>;
+
 	template<typename P>
 	class RepositoryCore
 	{
 	public:
-		using FilePath = std::string;
-		using Key = std::string;
-		using Keys = std::vector<Key>;
-
 		RepositoryCore() = default;
 		RepositoryCore(const RepositoryCore<P>& rc);
 		RepositoryCore(RepositoryCore<P>&& rc);
@@ -40,10 +41,14 @@ namespace RepoCore
 
 		RepositoryCore<P>& storeFile(P p);
 
+		Keys findFileWithVersion(FilePath path, int version);
+
+		FilePath getOriginalName(const FilePath& path);
+
 	private:
 		DbCore<P> db_;
 		FilePath path_ = "";
-		//DbElement<P>* p_dbe = nullptr;
+		DbElement<P>* p_dbe_path = nullptr;
 	};
 
 	//----< copy constructor >--------------------------------------------
@@ -81,11 +86,21 @@ namespace RepoCore
 	template<typename P>
 	RepositoryCore<P>& RepositoryCore<P>::storeFile(P p)
 	{
-		Key& key = p.value();
-		DbElement<P>& dbe = db_[key];
-		dbe.children(p.dependFiles);
-		dbe.name(FileSystem::Path::getName(p.value()));
-		dbe.payLoad(p);
+		if (!path_.emtpy())
+		{
+			Key& key = p.value();
+			DbElement<P>& dbe = db_[key];
+			dbe.children(p.dependFiles());
+			dbe.name(FileSystem::Path::getName(p.value()));
+			dbe.filename(p.name());
+			dbe.payLoad(p);
+
+			db_[path_].children().push_back(key);
+		}
+		else
+		{
+			std::cout << "Failed to store files in database because the repository path has not been initialized. " << std::endl;
+		}
 		return *this;
 	}
 
@@ -97,15 +112,23 @@ namespace RepoCore
 			return FileSystem::Directory::create(path_);
 		}
 	}
+	 
+	template<typename P>
+	Keys RepositoryCore<P>::findFileWithVersion(FilePath path, int version)
+	{
+		Query<P> q(db_);
 
-	/*
-	PayLoad pl;
-	CheckIn ci
-	ci.open();
-	CI::addFile()
-	CI::addPackage()
+		auto fileWithVersion = [=version](DbElement<P>& elem) {
+			return ((elem.payLoad()).version() == version);
+		};
 
-	repository.check_in(ci)
-	*/
+		return q.from(db_[path].children()).fileWithVerison(version);
+	}
+
+	template<typename P>
+	FilePath RepositoryCore<P>::getOriginalName(const FilePath& path)
+	{
+		return db_[path].filename();
+	}
 
 }

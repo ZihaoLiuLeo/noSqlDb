@@ -33,6 +33,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FileSystemDemo", "FileSyste
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Version", "Version\Version.vcxproj", "{85FD62AE-8007-48F1-9D93-ABBBEAA34631}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CheckOut", "CheckOut\CheckOut.vcxproj", "{928DA657-0C27-4FB8-A895-5DA44EAAF725}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -133,6 +135,14 @@ Global
 		{85FD62AE-8007-48F1-9D93-ABBBEAA34631}.Release|x64.Build.0 = Release|x64
 		{85FD62AE-8007-48F1-9D93-ABBBEAA34631}.Release|x86.ActiveCfg = Release|Win32
 		{85FD62AE-8007-48F1-9D93-ABBBEAA34631}.Release|x86.Build.0 = Release|Win32
+		{928DA657-0C27-4FB8-A895-5DA44EAAF725}.Debug|x64.ActiveCfg = Debug|x64
+		{928DA657-0C27-4FB8-A895-5DA44EAAF725}.Debug|x64.Build.0 = Debug|x64
+		{928DA657-0C27-4FB8-A895-5DA44EAAF725}.Debug|x86.ActiveCfg = Debug|Win32
+		{928DA657-0C27-4FB8-A895-5DA44EAAF725}.Debug|x86.Build.0 = Debug|Win32
+		{928DA657-0C27-4FB8-A895-5DA44EAAF725}.Release|x64.ActiveCfg = Release|x64
+		{928DA657-0C27-4FB8-A895-5DA44EAAF725}.Release|x64.Build.0 = Release|x64
+		{928DA657-0C27-4FB8-A895-5DA44EAAF725}.Release|x86.ActiveCfg = Release|Win32
+		{928DA657-0C27-4FB8-A895-5DA44EAAF725}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

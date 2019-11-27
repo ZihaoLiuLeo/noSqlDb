@@ -198,6 +198,4 @@ namespace NoSqlDb
 		}
 		return *this;
 	}
-
-	
  }

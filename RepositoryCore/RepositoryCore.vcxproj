@@ -120,6 +120,17 @@
   <ItemGroup>
     <ClCompile Include="RepositoryCore.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DbCore\DbCore.vcxproj">
+      <Project>{9eddb1b5-90e6-4d4f-8b3b-dba3e3ffdb7a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\PayLoad\PayLoad.vcxproj">
+      <Project>{ad1ca2a6-8efe-44b9-bfca-22b3090ae5f1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Query\Query.vcxproj">
+      <Project>{bbc0b8d8-fe35-4be1-89c9-eb7a9fc187a2}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

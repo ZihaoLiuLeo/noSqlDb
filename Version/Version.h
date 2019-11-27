@@ -14,7 +14,9 @@ namespace RepoCore
 
 		bool AbleToLock() const { return ableToLock; }
 
-		std::string getNum() const { return std::to_string(versionNum_); }
+		std::string getNumString() const { return std::to_string(versionNum_); }
+
+		int getNumInt() const { return versionNum_; }
 
 	private:
 		int versionNum_ = 1;

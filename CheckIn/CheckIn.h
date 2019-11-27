@@ -45,7 +45,7 @@ namespace RepoCore {
 
 	private:
 		RepositoryCore<P>& rc_;
-		P p_;
+		P* p_ = nullptr;
 		Status isOpen = true;
 		Version version;	
 	};
@@ -105,7 +105,7 @@ namespace RepoCore {
 			version.increment();
 		}
 
-		p_ = p;
+		p_ = &p;
 		std::string packagePath = p.value();
 		std::string repoPath = rc_.path();
 
@@ -120,12 +120,14 @@ namespace RepoCore {
 			std::string fs = FileSystem::Path::fileSpec(p.value(), packageFiles[i]);
 
 			// file info to be copied to
-			std::string tname = packageFiles[i] + "." + version.getNum();
+			std::string tname = packageFiles[i] + "." + version.getNumString();
 			std::string ts = FileSystem::Path::fileSpec(repoPath, tname);
 
 			// store info in database
 			P p_temp = p;
-			p_temp.value(packageFiles[i]);
+			p_temp.value(ts);
+			p_temp.version(version.getNumInt());
+			p_temp.name(packageFiles[i]);
 			rc_.storeFile(p_temp);
 			
 
@@ -133,7 +135,7 @@ namespace RepoCore {
 			File to(ts);
 			to.open(File::out, File::text);
 			File from(fs);
-			from.open(File::in, File::text);
+			from.open(File::in);
 
 			while (to.isGood() && from.isGood())
 			{
@@ -141,6 +143,8 @@ namespace RepoCore {
 				to.putLine(temp);
 				to.putLine("\n");
 			}
+			to.close();
+			from.close();
 		}
 
 		if (isOpen)
@@ -157,21 +161,29 @@ namespace RepoCore {
 	template<typename P>
 	bool CheckIn<P>::ableToClose()
 	{
-		std::vector<std::string> depends;
-		depends = p_.dependFiles();
-
-		std::string repoPath = rc_.path();
-		FileSystem::Directory::setCurrentDirectory(repoPath);
-		std::vector<std::string> pf = FileSystem::Directory::getFiles();
-
-		for (auto f : depends)
+		if (p_ != nullptr)
 		{
-			if (std::find(pf.begin(), pf.end(), f) == pf.end())
+			std::vector<std::string> depends;
+			depends = p_->dependFiles();
+
+			std::string repoPath = rc_.path();
+			FileSystem::Directory::setCurrentDirectory(repoPath);
+			std::vector<std::string> pf = FileSystem::Directory::getFiles();
+
+			for (auto f : depends)
 			{
-				return false;
+				std::string fn = FileSystem::Path::getName(f);
+				if (std::find(pf.begin(), pf.end(), f) == pf.end())
+				{
+					return false;
+				}
 			}
+			return true;
 		}
-		return true;
+		else
+		{
+			return false;
+		}
 	}
 
 	template<typename P>

@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{E041811B-BC1A-4047-9B69-61C00E46778B}</ProjectGuid>
-    <RootNamespace>CheckIn</RootNamespace>
+    <ProjectGuid>{928DA657-0C27-4FB8-A895-5DA44EAAF725}</ProjectGuid>
+    <RootNamespace>CheckOut</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -118,24 +118,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CheckIn.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DbCore\DbCore.vcxproj">
-      <Project>{9eddb1b5-90e6-4d4f-8b3b-dba3e3ffdb7a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\FileSystem\FileSystemDemo\FileSystemDemo.vcxproj">
-      <Project>{ef4a3188-ca93-45a2-ab52-7548669e3aa8}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\PayLoad\PayLoad.vcxproj">
-      <Project>{ad1ca2a6-8efe-44b9-bfca-22b3090ae5f1}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\RepositoryCore\RepositoryCore.vcxproj">
-      <Project>{7ed9ffba-3856-456e-96a6-6e35385ca438}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Version\Version.vcxproj">
-      <Project>{85fd62ae-8007-48f1-9d93-abbbeaa34631}</Project>
-    </ProjectReference>
+    <ClInclude Include="CheckOut.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -62,6 +62,10 @@ namespace NoSqlDb
     std::string& descrip() { return descrip_; }
     std::string descrip() const { return descrip_; }
     void descrip(const std::string& name) { descrip_ = name; }
+
+	std::string& filename() { return filename_; }
+	std::string filename() const { return filename_; }
+	void filename(const std::string& filename) { filename_ = filename; }
     
     DateTime& dateTime() { return dateTime_; }
     DateTime dateTime() const { return dateTime_; }
@@ -78,6 +82,7 @@ namespace NoSqlDb
   private:
     std::string name_;
     std::string descrip_;
+	std::string filename_;
     DateTime dateTime_;
     Children children_;
     T payLoad_;
