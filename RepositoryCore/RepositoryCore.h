@@ -2,7 +2,7 @@
 /////////////////////////////////////////////////////////////////////
 // RepositoryCore.h - Implements RepositoryCore for file managing  //
 // ver 1.0                                                         //
-// Zihao Liu, Spring 2018                                          //
+// Zihao Liu, Fall 2019                                          //
 /////////////////////////////////////////////////////////////////////
 
 #include "../DbCore/DbCore.h"
@@ -11,6 +11,8 @@
 #include <string>
 #include "../FileSystem/FileSystemDemo/FileSystem.h"
 #include "../Query/Query.h"
+#include <stack>
+#include <vector>
 
 
 namespace RepoCore
@@ -39,11 +41,14 @@ namespace RepoCore
 
 		bool createRepoDir();
 
-		RepositoryCore<P>& storeFile(P p);
+		RepositoryCore<P>& storePackage(P p);
 
-		Keys findFileWithVersion(FilePath path, int version);
+		FilePath getPackDir(const Key& key);
+		std::string getPackDescrip(const Key& key);
 
-		FilePath getOriginalName(const FilePath& path);
+		bool containsPack(const Key& key);
+
+		std::vector<Key*> browseAll(Key *pack);
 
 	private:
 		DbCore<P> db_;
@@ -84,18 +89,17 @@ namespace RepoCore
 	}
 
 	template<typename P>
-	RepositoryCore<P>& RepositoryCore<P>::storeFile(P p)
+	RepositoryCore<P>& RepositoryCore<P>::storePackage(P p)
 	{
 		if (!path_.emtpy())
 		{
 			Key& key = p.value();
 			DbElement<P>& dbe = db_[key];
-			dbe.children(p.dependFiles());
-			dbe.name(FileSystem::Path::getName(p.value()));
-			dbe.filename(p.name());
+			dbe.children(p.dependPacks());
+			dbe.name(path_);
 			dbe.payLoad(p);
 
-			db_[path_].children().push_back(key);
+			//db_[path_].children().push_back(key);
 		}
 		else
 		{
@@ -112,23 +116,50 @@ namespace RepoCore
 			return FileSystem::Directory::create(path_);
 		}
 	}
-	 
+
 	template<typename P>
-	Keys RepositoryCore<P>::findFileWithVersion(FilePath path, int version)
+	FilePath RepositoryCore<P>::getPackDir(const Key& key)
 	{
-		Query<P> q(db_);
-
-		auto fileWithVersion = [=version](DbElement<P>& elem) {
-			return ((elem.payLoad()).version() == version);
-		};
-
-		return q.from(db_[path].children()).fileWithVerison(version);
+		return db_[key].name();
 	}
 
 	template<typename P>
-	FilePath RepositoryCore<P>::getOriginalName(const FilePath& path)
+	std::string RepositoryCore<P>::getPackDescrip(const Key& key)
 	{
-		return db_[path].filename();
+		return db_[key].description();
 	}
 
+
+	template<typename P>
+	bool RepositoryCore<P>::containsPack(const Key& key)
+	{
+		return db_.contains(key);
+	}
+
+	template<typename P>
+	std::vector<Key*> RepositoryCore<P>::browseAll(Key *pack)
+	{
+		std::vector<Key*> packDirs;
+
+		std::stack<Key*> keyStack;
+
+		keyStack.push(pack);
+		while (keyStack.size() > 0)
+		{
+			Key* pCNode = keyStack.top();
+			keyStack.pop();
+			packDirs.push_back(pCNode);
+			size_t numChildren = db_[&pCNode].children().size();
+			for (size_t i = 0; i < numChildren; ++i)
+			{
+				Key* k = db_[&pCNode].children()[numChildren - i - 1];
+
+				if (std::find(packDirs.begin(), packDirs.end(), k) == packDirs.end())
+				{
+					keyStack.push(k);
+				}
+			}
+		}
+		
+	}
 }

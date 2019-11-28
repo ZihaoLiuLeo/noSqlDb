@@ -28,9 +28,9 @@ namespace NoSqldb
 		std::vector<std::string> categories() const { return categories_; }
 		void categories(const std::vector<std::string>& categories) { categories_ = categories; }
 
-		std::vector<FileName>& dependFiles() { return dependFiles_; }
-		std::vector<FileName> dependsFiles() const { return dependFiles_; }
-		void dependFiles(const std::vector<FileName>& depends) { dependFiles_ = depends; }
+		std::vector<FileName>& dependPacks() { return dependPacks_; }
+		std::vector<FileName> dependsFiles() const { return dependPacks_; }
+		void dependPacks(const std::vector<FileName>& depends) { dependPacks_ = depends; }
 
 		int& version() { return version_; }
 		int version() const { return version_; }
@@ -43,7 +43,7 @@ namespace NoSqldb
 		std::string value_;
 		std::string name_;
 		std::vector<std::string> categories_;
-		std::vector<FileName> dependFiles_;
+		std::vector<FileName> dependPacks_;
 		int version_ = 0;
 	};
 

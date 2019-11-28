@@ -174,12 +174,12 @@ namespace NoSqlDb
 
 	template<typename T>
 	template<typename CallObj>
-	Query<T>& Query<T>::select(CallObj callobj)
+	Query<T>& Query<T>::select(CallObj co)
 	{
 		Keys new_keys;
 		for (auto k : keys_)
 		{
-			if (callobj((*db_)[k]))
+			if (co((*db_)[k]))
 			{
 				new_keys.push_back(k);
 			}

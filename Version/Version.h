@@ -1,4 +1,9 @@
 #pragma once
+/////////////////////////////////////////////////////////////////////
+// Version.h - Version monitoring mathods for repository           //
+// ver 1.0                                                         //
+// Zihao Liu, fall 2019                                            //
+/////////////////////////////////////////////////////////////////////
 #include <string>
 
 namespace RepoCore

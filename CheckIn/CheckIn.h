@@ -2,7 +2,7 @@
 /////////////////////////////////////////////////////////////////////
 // CheckIn.h - CheckIn mathods for repository                      //
 // ver 1.0                                                         //
-// Zihao Liu, Spring 2018                                          //
+// Zihao Liu, fall 2019                                            //
 /////////////////////////////////////////////////////////////////////
 
 
@@ -32,7 +32,6 @@ namespace RepoCore {
 		CheckIn<P>& operator=(const CheckIn<P>& ci);
 		CheckIn<P>& operator=(CheckIn<P>&& ci);
 
-		CheckIn<P>& addFile(P p); // open checkin then store info in db, store file in repo, add version to filename, close then update version
 		CheckIn<P>& addPackage(P p);
 
 		CheckIn<P>& Close();
@@ -79,24 +78,6 @@ namespace RepoCore {
 	}
 
 	template<typename P>
-	CheckIn<P>& CheckIn<P>::addFile(P p)
-	{
-		rc_.storeFile(p);
-		if (isOpen)
-		{
-			
-			//TODO denpendency check
-			// p.dependFile all in dir
-			/*
-			open p.value();
-			new filename: filename + version.num(), copy content
-			add to rc_.path();
-			*/
-		}
-		return *this;
-	}
-
-	template<typename P>
 	CheckIn<P>& CheckIn<P>::addPackage(P p)
 	{
 		
@@ -108,6 +89,12 @@ namespace RepoCore {
 		p_ = &p;
 		std::string packagePath = p.value();
 		std::string repoPath = rc_.path();
+
+		// store info in database
+		P p_temp = p;
+		p_temp.version(version.getNumInt());
+		p_temp.name(repoPath);
+		rc_.storePackage(p_temp);
 
 		// go to checkin package location
 		FileSystem::Directory::setCurrentDirectory(repoPath);
@@ -123,12 +110,7 @@ namespace RepoCore {
 			std::string tname = packageFiles[i] + "." + version.getNumString();
 			std::string ts = FileSystem::Path::fileSpec(repoPath, tname);
 
-			// store info in database
-			P p_temp = p;
-			p_temp.value(ts);
-			p_temp.version(version.getNumInt());
-			p_temp.name(packageFiles[i]);
-			rc_.storeFile(p_temp);
+			
 			
 
 			//copy file into repo path
@@ -164,16 +146,11 @@ namespace RepoCore {
 		if (p_ != nullptr)
 		{
 			std::vector<std::string> depends;
-			depends = p_->dependFiles();
-
-			std::string repoPath = rc_.path();
-			FileSystem::Directory::setCurrentDirectory(repoPath);
-			std::vector<std::string> pf = FileSystem::Directory::getFiles();
+			depends = p_->dependPacks();
 
 			for (auto f : depends)
 			{
-				std::string fn = FileSystem::Path::getName(f);
-				if (std::find(pf.begin(), pf.end(), f) == pf.end())
+				if (!rc_.containsPack(f))
 				{
 					return false;
 				}
